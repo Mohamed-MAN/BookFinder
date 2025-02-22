@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookFinder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <a href="home.html"><h1>Book Finder</h1></a>
+        <form class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter a book title">
+            <a href="#" id="searchButton"><img class="search-icon" src="http://www.endlessicons.com/wp-content/uploads/2012/12/search-icon.png"></a>
+        </form>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="myBooks.html">My Books</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="container">
+        <section id="featured-books" class="featured-books">
+            <h2>Featured Books</h2>
+            <div id="featured-books-grid" class="books-grid">
+                <!-- Featured books will be dynamically populated here -->
+            </div>
+        </section>
+        <div id="results" class="results"></div>
+        <div id="pagination" class="pagination"></div>
+    </div>
+    <script src="config.js"></script>
+    <script src="featured-books.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <link rel="stylesheet" href="book.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <a href="home.html"><h1>Book Finder</h1></a>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="myBooks.html">My Books</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="container">
+        <h1 id="book-title">Loading...</h1>
+        <div class="book-details">
+            <img id="book-cover" src="./default-cover.jpg" alt="Book Cover" />
+            <div>
+                <p><strong>Author:</strong> <span id="book-author"></span></p>
+                <p><strong>Published:</strong> <span id="book-published"></span></p>
+                <p><strong>Description:</strong></p>
+                <p id="book-description">Loading...</p>
+                <div class="book-actions">
+                    <button onclick="goBack()">Go Back</button>
+                    <button id="addToMyBooks">Add to My Books</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="config.js"></script>
+    <script src="featured-books.js"></script>
+    <script src="book.js"></script>
+</body>
+</html>
