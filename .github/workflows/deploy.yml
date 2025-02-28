@@ -19,7 +19,7 @@ jobs:
         run: |
           if [ -n "${{ secrets.GOOGLE_BOOKS_API_KEY }}" ]; then
             echo "API key is available"
-            echo "First few characters: ${${{ secrets.GOOGLE_BOOKS_API_KEY }}:0:4}..."
+            echo "Length of API key: ${#GOOGLE_BOOKS_API_KEY}"
           else
             echo "API key is NOT available"
           fi
@@ -30,8 +30,8 @@ jobs:
           echo "window.CONFIG = { GOOGLE_BOOKS_API_KEY: '${{ secrets.GOOGLE_BOOKS_API_KEY }}' };" > config.js
           echo "Config.js created with size:"
           ls -l config.js
-          echo "Config.js contents:"
-          cat config.js
+          echo "Config.js contents (masked):"
+          cat config.js | sed 's/GOOGLE_BOOKS_API_KEY: .*/GOOGLE_BOOKS_API_KEY: ***MASKED***/g'
 
       - name: Setup deployment
         run: |
@@ -39,6 +39,8 @@ jobs:
           cp -r * _site/ || true
           echo "Contents of _site directory:"
           ls -la _site/
+          echo "Verifying config.js in _site:"
+          cat _site/config.js | sed 's/GOOGLE_BOOKS_API_KEY: .*/GOOGLE_BOOKS_API_KEY: ***MASKED***/g'
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -50,11 +52,16 @@ jobs:
       - name: Verify deployment
         run: |
           echo "Waiting for deployment..."
-          sleep 10
+          sleep 30
           echo "Checking gh-pages branch..."
           git fetch origin gh-pages
           git checkout gh-pages
           echo "Contents of gh-pages branch:"
           ls -la
           echo "Checking config.js:"
-          cat config.js || echo "config.js not found!"
+          if [ -f "config.js" ]; then
+            echo "config.js exists"
+            cat config.js | sed 's/GOOGLE_BOOKS_API_KEY: .*/GOOGLE_BOOKS_API_KEY: ***MASKED***/g'
+          else
+            echo "config.js not found!"
+          fi

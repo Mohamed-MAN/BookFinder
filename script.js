@@ -1,19 +1,37 @@
 // Debug loading order
 console.log('script.js loading...');
-console.log('Current scripts loaded:', Array.from(document.scripts).map(s => s.src));
+
+// Function to check if config is loaded
+function waitForConfig(maxAttempts = 10) {
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        
+        function checkConfig() {
+            console.log('Checking for CONFIG, attempt:', attempts + 1);
+            if (window.CONFIG) {
+                console.log('CONFIG found:', window.CONFIG);
+                resolve(window.CONFIG);
+            } else if (attempts >= maxAttempts) {
+                console.error('CONFIG not found after', maxAttempts, 'attempts');
+                reject(new Error('CONFIG not found after maximum attempts'));
+            } else {
+                attempts++;
+                setTimeout(checkConfig, 100);
+            }
+        }
+        
+        checkConfig();
+    });
+}
 
 // Initialize API key
 let API_KEY;
 
 // Function to initialize the API key
-function initializeApiKey() {
+async function initializeApiKey() {
     console.log('Initializing API key...');
-    console.log('window.CONFIG:', window.CONFIG);
     try {
-        if (!window.CONFIG) {
-            console.error('window.CONFIG is not defined');
-            throw new Error('CONFIG not found in window object');
-        }
+        await waitForConfig();
         if (!window.CONFIG.GOOGLE_BOOKS_API_KEY) {
             console.error('API key not found in CONFIG:', window.CONFIG);
             throw new Error('API key not found in CONFIG object');
@@ -25,7 +43,7 @@ function initializeApiKey() {
         console.error('Error loading API key:', error);
         console.error('Error stack:', error.stack);
         console.error('window object keys:', Object.keys(window));
-        document.getElementById('results').innerHTML = 'Error: API configuration is missing. Please check the setup instructions in the README.';
+        document.getElementById('results').innerHTML = 'Error: API configuration is missing. Please check the console for more details.';
         return false;
     }
 }
