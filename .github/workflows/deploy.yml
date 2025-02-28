@@ -17,14 +17,12 @@ jobs:
 
       - name: Create config file
         run: |
+          echo "Creating config.js..."
           echo "const CONFIG = { GOOGLE_BOOKS_API_KEY: '${{ secrets.GOOGLE_BOOKS_API_KEY }}' }; export default CONFIG;" > config.js
-
-      - name: List files
-        run: |
-          echo "Contents of directory:"
-          ls -la
-          echo "Contents of config.js:"
+          echo "Config.js created. Contents:"
           cat config.js
+          echo "Directory contents before deployment:"
+          ls -la
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -32,3 +30,13 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
           force_orphan: true
+
+      - name: Verify deployment
+        run: |
+          echo "Checking gh-pages branch..."
+          git fetch origin gh-pages
+          git checkout gh-pages
+          echo "Files in gh-pages branch:"
+          ls -la
+          echo "Checking if config.js exists and its contents:"
+          cat config.js || echo "config.js not found!"

@@ -3,14 +3,20 @@ let API_KEY;
 
 // Function to initialize the API key
 async function initializeApiKey() {
+    console.log('Initializing API key...');
     try {
+        console.log('Attempting to import config.js...');
+        console.log('Current script path:', import.meta.url);
         const module = await import('./config.js');
+        console.log('Config module loaded:', module);
         API_KEY = module.default.GOOGLE_BOOKS_API_KEY;
         if (!API_KEY) {
             throw new Error('API key is undefined');
         }
+        console.log('API key loaded successfully');
     } catch (error) {
         console.error('Error loading API key:', error);
+        console.error('Error stack:', error.stack);
         document.getElementById('results').innerHTML = 'Error: API configuration is missing. Please check the setup instructions in the README.';
         return false;
     }
