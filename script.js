@@ -2,25 +2,21 @@
 let API_KEY;
 
 // Function to initialize the API key
-async function initializeApiKey() {
+function initializeApiKey() {
     console.log('Initializing API key...');
     try {
-        console.log('Attempting to import config.js...');
-        console.log('Current script path:', import.meta.url);
-        const module = await import('./config.js');
-        console.log('Config module loaded:', module);
-        API_KEY = module.default.GOOGLE_BOOKS_API_KEY;
-        if (!API_KEY) {
-            throw new Error('API key is undefined');
+        if (!window.CONFIG || !window.CONFIG.GOOGLE_BOOKS_API_KEY) {
+            throw new Error('CONFIG or API key not found in window object');
         }
+        API_KEY = window.CONFIG.GOOGLE_BOOKS_API_KEY;
         console.log('API key loaded successfully');
+        return true;
     } catch (error) {
         console.error('Error loading API key:', error);
         console.error('Error stack:', error.stack);
         document.getElementById('results').innerHTML = 'Error: API configuration is missing. Please check the setup instructions in the README.';
         return false;
     }
-    return true;
 }
 
 // Caching mechanism
@@ -56,9 +52,8 @@ let totalBooks = 0;
 let currentQuery = '';
 
 // Initialize the app
-async function init() {
-    const apiKeyLoaded = await initializeApiKey();
-    if (apiKeyLoaded) {
+function init() {
+    if (initializeApiKey()) {
         // Add event listeners only if API key is loaded
         document.getElementById('searchButton').addEventListener('click', () => {
             const query = document.getElementById('searchInput').value;

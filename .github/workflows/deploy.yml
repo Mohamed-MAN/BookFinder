@@ -18,7 +18,7 @@ jobs:
       - name: Create config file
         run: |
           echo "Creating config.js..."
-          echo "const CONFIG = { GOOGLE_BOOKS_API_KEY: '${{ secrets.GOOGLE_BOOKS_API_KEY }}' }; export default CONFIG;" > config.js
+          echo "window.CONFIG = { GOOGLE_BOOKS_API_KEY: '${{ secrets.GOOGLE_BOOKS_API_KEY }}' };" > config.js
           echo "Config.js created. Contents:"
           cat config.js
           echo "Directory contents before deployment:"

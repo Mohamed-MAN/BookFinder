@@ -1,9 +1,24 @@
 // book.js
 
-import CONFIG from './config.js';
+// Initialize API key
+let API_KEY;
 
-// Default API key if not defined in CONFIG
-const API_KEY = CONFIG.GOOGLE_BOOKS_API_KEY;
+// Function to initialize the API key
+function initializeApiKey() {
+    console.log('Initializing API key for book.js...');
+    try {
+        if (!window.CONFIG || !window.CONFIG.GOOGLE_BOOKS_API_KEY) {
+            throw new Error('CONFIG or API key not found in window object');
+        }
+        API_KEY = window.CONFIG.GOOGLE_BOOKS_API_KEY;
+        console.log('API key loaded successfully in book.js');
+        return true;
+    } catch (error) {
+        console.error('Error loading API key:', error);
+        document.getElementById('book-title').innerHTML = 'Error: API configuration is missing. Please check the setup instructions in the README.';
+        return false;
+    }
+}
 
 // Book Management Utility
 const BookManager = {
@@ -139,5 +154,12 @@ function goBack() {
     window.history.back();
 }
 
-// Run the displayBookDetails function on page load
-displayBookDetails();
+// Initialize the app
+function init() {
+    if (initializeApiKey()) {
+        displayBookDetails();
+    }
+}
+
+// Start the app
+document.addEventListener('DOMContentLoaded', init);

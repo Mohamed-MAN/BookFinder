@@ -1,8 +1,25 @@
-import CONFIG from './config.js';
+// Initialize API key
+let API_KEY;
+
+// Function to initialize the API key
+function initializeApiKey() {
+    console.log('Initializing API key for featured-books.js...');
+    try {
+        if (!window.CONFIG || !window.CONFIG.GOOGLE_BOOKS_API_KEY) {
+            throw new Error('CONFIG or API key not found in window object');
+        }
+        API_KEY = window.CONFIG.GOOGLE_BOOKS_API_KEY;
+        console.log('API key loaded successfully in featured-books.js');
+        return true;
+    } catch (error) {
+        console.error('Error loading API key:', error);
+        document.getElementById('featured-books-grid').innerHTML = 'Error: API configuration is missing. Please check the setup instructions in the README.';
+        return false;
+    }
+}
 
 // Function to fetch featured books from Google Books API
 async function fetchFeaturedBooks() {
-    const apiKey = CONFIG.GOOGLE_BOOKS_API_KEY;
     const searchTerms = [
         'bestseller fiction',
         'atomic habits',
@@ -19,7 +36,7 @@ async function fetchFeaturedBooks() {
     try {
         const booksPromises = searchTerms.map(async (term) => {
             try {
-                const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(term)}&key=${apiKey}&maxResults=1`);
+                const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(term)}&key=${API_KEY}&maxResults=1`);
                 
                 // Check for rate limiting
                 if (response.status === 429) {
@@ -92,5 +109,12 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3) {
     }
 }
 
-// Call the function when the page loads
-document.addEventListener('DOMContentLoaded', fetchFeaturedBooks);
+// Initialize the app
+function init() {
+    if (initializeApiKey()) {
+        fetchFeaturedBooks();
+    }
+}
+
+// Start the app
+document.addEventListener('DOMContentLoaded', init);
