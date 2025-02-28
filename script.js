@@ -1,12 +1,22 @@
+// Debug loading order
+console.log('script.js loading...');
+console.log('Current scripts loaded:', Array.from(document.scripts).map(s => s.src));
+
 // Initialize API key
 let API_KEY;
 
 // Function to initialize the API key
 function initializeApiKey() {
     console.log('Initializing API key...');
+    console.log('window.CONFIG:', window.CONFIG);
     try {
-        if (!window.CONFIG || !window.CONFIG.GOOGLE_BOOKS_API_KEY) {
-            throw new Error('CONFIG or API key not found in window object');
+        if (!window.CONFIG) {
+            console.error('window.CONFIG is not defined');
+            throw new Error('CONFIG not found in window object');
+        }
+        if (!window.CONFIG.GOOGLE_BOOKS_API_KEY) {
+            console.error('API key not found in CONFIG:', window.CONFIG);
+            throw new Error('API key not found in CONFIG object');
         }
         API_KEY = window.CONFIG.GOOGLE_BOOKS_API_KEY;
         console.log('API key loaded successfully');
@@ -14,6 +24,7 @@ function initializeApiKey() {
     } catch (error) {
         console.error('Error loading API key:', error);
         console.error('Error stack:', error.stack);
+        console.error('window object keys:', Object.keys(window));
         document.getElementById('results').innerHTML = 'Error: API configuration is missing. Please check the setup instructions in the README.';
         return false;
     }
@@ -23,22 +34,28 @@ function initializeApiKey() {
 const BookCache = {
     _cache: {},
     get: function(key) {
+        console.log('Getting cache for key:', key);
         if (this._cache[key] && 
             (Date.now() - this._cache[key].timestamp) < 24 * 60 * 60 * 1000) {
+            console.log('Cache hit for key:', key);
             return this._cache[key].data;
         }
+        console.log('Cache miss for key:', key);
         return null;
     },
     set: function(key, data) {
+        console.log('Setting cache for key:', key);
         this._cache[key] = {
             data: data,
             timestamp: Date.now()
         };
     },
     clear: function() {
+        console.log('Clearing cache');
         const now = Date.now();
         for (let key in this._cache) {
             if ((now - this._cache[key].timestamp) > 24 * 60 * 60 * 1000) {
+                console.log('Removing cache for key:', key);
                 delete this._cache[key];
             }
         }
@@ -53,11 +70,15 @@ let currentQuery = '';
 
 // Initialize the app
 function init() {
+    console.log('Initializing app...');
     if (initializeApiKey()) {
+        console.log('API key loaded, adding event listeners...');
         // Add event listeners only if API key is loaded
         document.getElementById('searchButton').addEventListener('click', () => {
+            console.log('Search button clicked');
             const query = document.getElementById('searchInput').value;
             if (!query.trim()) {
+                console.log('Empty search query');
                 alert('Please enter a book title to search');
                 return;
             }
@@ -69,9 +90,12 @@ function init() {
         });
 
         document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            console.log('Search input keypress:', e.key);
             if (e.key === 'Enter') {
+                console.log('Enter key pressed');
                 const query = document.getElementById('searchInput').value;
                 if (!query.trim()) {
+                    console.log('Empty search query');
                     alert('Please enter a book title to search');
                     return;
                 }
@@ -82,24 +106,27 @@ function init() {
                 searchBooks(query);
             }
         });
+    } else {
+        console.log('API key not loaded, skipping event listeners');
     }
 }
 
 const searchBooks = (query, page = 1) => {
+    console.log('Searching books for query:', query, 'page:', page);
     const startIndex = (page - 1) * booksPerPage;
     const cacheKey = `${query}_${page}`;
     
     // Check cache first
     const cachedData = BookCache.get(cacheKey);
     if (cachedData) {
-        console.log('Using cached data');
+        console.log('Using cached data for query:', query, 'page:', page);
         totalBooks = cachedData.totalItems;
         displayBooks(cachedData.items);
         createPagination();
         return;
     }
     
-    console.log('Fetching from API');
+    console.log('Fetching from API for query:', query, 'page:', page);
     fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&key=${API_KEY}&startIndex=${startIndex}&maxResults=${booksPerPage}`)
         .then(response => {
             console.log('Response status:', response.status);
@@ -118,19 +145,20 @@ const searchBooks = (query, page = 1) => {
                 displayBooks(data.items);
                 createPagination();
             } else {
-                console.log('No items found');
+                console.log('No items found for query:', query, 'page:', page);
                 document.getElementById('results').innerHTML = 'No books found.';
                 document.getElementById('pagination').innerHTML = '';
             }
         })
         .catch(error => {
-            console.error('Error fetching data:', error);
+            console.error('Error fetching data for query:', query, 'page:', page, error);
             document.getElementById('results').innerHTML = `Error fetching books: ${error.message}`;
             document.getElementById('pagination').innerHTML = '';
         });
 };
 
 const displayBooks = (books) => {
+    console.log('Displaying books:', books);
     const results = document.getElementById('results');
     results.innerHTML = '';
     console.log('Number of books:', books.length);
@@ -153,6 +181,7 @@ const displayBooks = (books) => {
 };
 
 const createPagination = () => {
+    console.log('Creating pagination');
     const paginationContainer = document.getElementById('pagination');
     paginationContainer.innerHTML = '';
 
@@ -163,6 +192,7 @@ const createPagination = () => {
         const prevButton = document.createElement('button');
         prevButton.textContent = 'Previous';
         prevButton.addEventListener('click', () => {
+            console.log('Previous button clicked');
             currentPage--;
             searchBooks(currentQuery, currentPage);
         });
@@ -175,6 +205,7 @@ const createPagination = () => {
         pageButton.textContent = i;
         pageButton.classList.toggle('active', i === currentPage);
         pageButton.addEventListener('click', () => {
+            console.log('Page button clicked:', i);
             currentPage = i;
             searchBooks(currentQuery, currentPage);
         });
@@ -186,6 +217,7 @@ const createPagination = () => {
         const nextButton = document.createElement('button');
         nextButton.textContent = 'Next';
         nextButton.addEventListener('click', () => {
+            console.log('Next button clicked');
             currentPage++;
             searchBooks(currentQuery, currentPage);
         });
