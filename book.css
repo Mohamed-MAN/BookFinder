@@ -142,16 +142,53 @@ button:hover {
 }
 
 @media (max-width: 768px) {
+    .container {
+        margin-top: 100px;
+        padding: 20px;
+        width: 90%;
+    }
+
+    #book-title {
+        font-size: 2em;
+        margin-bottom: 15px;
+    }
+
     .book-details {
         flex-direction: column;
         align-items: center;
+        gap: 20px;
     }
 
     #book-cover {
-        max-width: 250px;
+        max-width: 200px;
     }
 
     .book-details > div {
         text-align: center;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin-top: 80px;
+        padding: 15px;
+    }
+
+    #book-title {
+        font-size: 1.8em;
+    }
+
+    #book-cover {
+        max-width: 180px;
+    }
+
+    .book-details p {
+        font-size: 0.9em;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
     }
 }

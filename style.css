@@ -413,6 +413,81 @@ input#searchInput{
 /* Adjust the responsivness */
 
 /* Media queries */
+@media (max-width: 768px) {
+    .header {
+        padding: 0 15px;
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+    }
+
+    .header nav ul {
+        margin-right: 0;
+        margin-top: 10px;
+    }
+
+    .search-container {
+        width: 90%;
+        margin: 0 auto;
+        top: 1rem;
+    }
+
+    .search-icon {
+        right: -15px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .featured-book img {
+        height: 200px;
+    }
+
+    .featured-book .book-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .results {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        padding: 0 10px;
+    }
+
+    .book {
+        padding: 15px;
+    }
+
+    .book img {
+        max-width: 120px;
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.4em;
+    }
+
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
+
+    .results {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
+
+    .featured-book img {
+        height: 180px;
+    }
+}
+
 @media (max-width: 600px) {
     .container {
         padding: 10px;
