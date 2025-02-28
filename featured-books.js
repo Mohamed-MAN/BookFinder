@@ -1,3 +1,6 @@
+// Debug loading order
+console.log('featured-books.js loading...');
+
 // Initialize API key
 let API_KEY;
 
@@ -5,15 +8,21 @@ let API_KEY;
 function initializeApiKey() {
     console.log('Initializing API key for featured-books.js...');
     try {
-        if (!window.CONFIG || !window.CONFIG.GOOGLE_BOOKS_API_KEY) {
-            throw new Error('CONFIG or API key not found in window object');
+        if (!window.CONFIG) {
+            console.error('window.CONFIG is not defined');
+            throw new Error('CONFIG not found in window object');
+        }
+        if (!window.CONFIG.GOOGLE_BOOKS_API_KEY) {
+            console.error('API key not found in CONFIG:', window.CONFIG);
+            throw new Error('API key not found in CONFIG object');
         }
         API_KEY = window.CONFIG.GOOGLE_BOOKS_API_KEY;
         console.log('API key loaded successfully in featured-books.js');
         return true;
     } catch (error) {
         console.error('Error loading API key:', error);
-        document.getElementById('featured-books-grid').innerHTML = 'Error: API configuration is missing. Please check the setup instructions in the README.';
+        console.error('window object keys:', Object.keys(window));
+        document.getElementById('featured-books-grid').innerHTML = 'Error: API configuration is missing. Please check the console for more details.';
         return false;
     }
 }

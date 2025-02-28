@@ -22,11 +22,13 @@ jobs:
             echo "Length of API key: ${#GOOGLE_BOOKS_API_KEY}"
           else
             echo "API key is NOT available"
+            exit 1
           fi
 
       - name: Create config file
         run: |
           echo "Creating config.js..."
+          # Create config.js with window.CONFIG
           echo "window.CONFIG = { GOOGLE_BOOKS_API_KEY: '${{ secrets.GOOGLE_BOOKS_API_KEY }}' };" > config.js
           echo "Config.js created with size:"
           ls -l config.js
@@ -40,7 +42,13 @@ jobs:
           echo "Contents of _site directory:"
           ls -la _site/
           echo "Verifying config.js in _site:"
-          cat _site/config.js | sed 's/GOOGLE_BOOKS_API_KEY: .*/GOOGLE_BOOKS_API_KEY: ***MASKED***/g'
+          if [ -f "_site/config.js" ]; then
+            echo "config.js exists in _site"
+            cat _site/config.js | sed 's/GOOGLE_BOOKS_API_KEY: .*/GOOGLE_BOOKS_API_KEY: ***MASKED***/g'
+          else
+            echo "config.js NOT found in _site!"
+            exit 1
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -60,8 +68,9 @@ jobs:
           ls -la
           echo "Checking config.js:"
           if [ -f "config.js" ]; then
-            echo "config.js exists"
+            echo "config.js exists in gh-pages"
             cat config.js | sed 's/GOOGLE_BOOKS_API_KEY: .*/GOOGLE_BOOKS_API_KEY: ***MASKED***/g'
           else
-            echo "config.js not found!"
+            echo "config.js NOT found in gh-pages!"
+            exit 1
           fi

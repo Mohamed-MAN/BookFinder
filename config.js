@@ -1,5 +1,4 @@
-const CONFIG = {
-    GOOGLE_BOOKS_API_KEY: process.env.GOOGLE_BOOKS_API_KEY || '${{ secrets.GOOGLE_BOOKS_API_KEY }}'
+// Local development configuration
+window.CONFIG = {
+    GOOGLE_BOOKS_API_KEY: 'AIzaSyDQZyMsb-RgyelVVRC5Pzb5E1RQjNRX4TY'
 };
-
-module.exports = CONFIG;
