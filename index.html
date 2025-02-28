@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Finder</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Load config first -->
+    <script>
+        console.log('Page loading started');
+        window.addEventListener('error', function(e) {
+            console.error('Script error:', e.filename, e.lineno, e.message);
+        });
+    </script>
+    <script type="module" src="config.js"></script>
+    <script>
+        // Verify config loaded
+        console.log('Config script tag processed');
+        if (window.CONFIG) {
+            console.log('CONFIG object exists after config.js load');
+        } else {
+            console.error('CONFIG object not found after config.js load');
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <a href="home.html"><h1>Book Finder</h1></a>
+        <form class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter a book title">
+            <a href="#" id="searchButton"><img class="search-icon" src="https://www.endlessicons.com/wp-content/uploads/2012/12/search-icon.png"></a>
+        </form>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="myBooks.html">My Books</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="container">
+        <section id="featured-books" class="featured-books">
+            <h2>Featured Books</h2>
+            <div id="featured-books-grid" class="books-grid">
+                <!-- Featured books will be dynamically populated here -->
+            </div>
+        </section>
+        <div id="results" class="results"></div>
+        <div id="pagination" class="pagination"></div>
+    </div>
+    <script type="module" src="script.js"></script>
+    <script type="module" src="featured-books.js"></script>
+</body>
+</html>
