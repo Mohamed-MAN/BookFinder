@@ -1,6 +1,21 @@
-import CONFIG from './config.js';
+// Initialize API key
+let API_KEY;
 
-const API_KEY = CONFIG.GOOGLE_BOOKS_API_KEY;
+// Function to initialize the API key
+async function initializeApiKey() {
+    try {
+        const module = await import('./config.js');
+        API_KEY = module.default.GOOGLE_BOOKS_API_KEY;
+        if (!API_KEY) {
+            throw new Error('API key is undefined');
+        }
+    } catch (error) {
+        console.error('Error loading API key:', error);
+        document.getElementById('results').innerHTML = 'Error: API configuration is missing. Please check the setup instructions in the README.';
+        return false;
+    }
+    return true;
+}
 
 // Caching mechanism
 const BookCache = {
@@ -34,39 +49,40 @@ const booksPerPage = 10;
 let totalBooks = 0;
 let currentQuery = '';
 
-// Add error handling for missing CONFIG
-if (!CONFIG || !CONFIG.GOOGLE_BOOKS_API_KEY) {
-    console.error('Google Books API Key is missing!');
-    alert('API configuration error. Please check your configuration.');
+// Initialize the app
+async function init() {
+    const apiKeyLoaded = await initializeApiKey();
+    if (apiKeyLoaded) {
+        // Add event listeners only if API key is loaded
+        document.getElementById('searchButton').addEventListener('click', () => {
+            const query = document.getElementById('searchInput').value;
+            if (!query.trim()) {
+                alert('Please enter a book title to search');
+                return;
+            }
+            currentQuery = query;
+            currentPage = 1;
+            const featuredBooks = document.getElementById('featured-books');
+            featuredBooks.style.display = 'none';
+            searchBooks(query);
+        });
+
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = document.getElementById('searchInput').value;
+                if (!query.trim()) {
+                    alert('Please enter a book title to search');
+                    return;
+                }
+                currentQuery = query;
+                currentPage = 1;
+                const featuredBooks = document.getElementById('featured-books');
+                featuredBooks.style.display = 'none';
+                searchBooks(query);
+            }
+        });
+    }
 }
-
-document.getElementById('searchButton').addEventListener('click', () => {
-    const query = document.getElementById('searchInput').value;
-    if (!query.trim()) {
-        alert('Please enter a book title to search');
-        return;
-    }
-    currentQuery = query;
-    currentPage = 1;
-    const featuredBooks = document.getElementById('featured-books');
-    featuredBooks.style.display = 'none';
-    searchBooks(query);
-});
-
-document.getElementById('searchInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter'){
-        const query = document.getElementById('searchInput').value;
-        if (!query.trim()) {
-            alert('Please enter a book title to search');
-            return;
-        }
-        currentQuery = query;
-        currentPage = 1;
-        const featuredBooks = document.getElementById('featured-books');
-        featuredBooks.style.display = 'none';
-        searchBooks(query);
-    }
-});
 
 const searchBooks = (query, page = 1) => {
     const startIndex = (page - 1) * booksPerPage;
@@ -175,3 +191,6 @@ const createPagination = () => {
         paginationContainer.appendChild(nextButton);
     }
 };
+
+// Start the app
+document.addEventListener('DOMContentLoaded', init);

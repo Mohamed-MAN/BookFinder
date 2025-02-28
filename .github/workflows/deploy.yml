@@ -15,11 +15,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Inject API Key into HTML
+      - name: Create config file
         run: |
-          sed -i '/<head>/a \    <script>window.GOOGLE_BOOKS_API_KEY = "${{ secrets.GOOGLE_BOOKS_API_KEY }}";</script>' index.html
-          sed -i '/<head>/a \    <script>window.GOOGLE_BOOKS_API_KEY = "${{ secrets.GOOGLE_BOOKS_API_KEY }}";</script>' book.html
-          sed -i '/<head>/a \    <script>window.GOOGLE_BOOKS_API_KEY = "${{ secrets.GOOGLE_BOOKS_API_KEY }}";</script>' myBooks.html
+          echo "const CONFIG = { GOOGLE_BOOKS_API_KEY: '${{ secrets.GOOGLE_BOOKS_API_KEY }}' }; export default CONFIG;" > config.js
+
+      - name: List files
+        run: |
+          echo "Contents of directory:"
+          ls -la
+          echo "Contents of config.js:"
+          cat config.js
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -27,4 +32,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
           force_orphan: true
-          enable_jekyll: false
