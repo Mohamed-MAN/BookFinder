@@ -1,6 +1,6 @@
-// Rename this file to config.js and add your API key
-const config = {
-    apiKey: 'YOUR_API_KEY_HERE'
+// Rename this file to config.js and replace YOUR_API_KEY with your actual Google Books API key
+const CONFIG = {
+    GOOGLE_BOOKS_API_KEY: 'YOUR_API_KEY'
 };
 
-export default config;
+export default CONFIG;
